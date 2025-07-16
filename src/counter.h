@@ -33,6 +33,7 @@ struct Counter {
     void draw(uint16_t currentValue);
     void draw();
     void drawDigit(int position, uint8_t digit);
+    void clear();
 };
 
 #endif // COUNTER_H

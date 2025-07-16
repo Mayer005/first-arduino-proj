@@ -1,6 +1,6 @@
 
 #include <Arduino_FreeRTOS.h>
-
+#include <Arduino.h>
 #include "counter.h"
 
 
@@ -10,15 +10,19 @@ TaskHandle_t xCounterHandle = NULL;
 
 void vCounterTask(void *pvParameters) {
   Counter counter;
+  uint32_t lastUpdateTime = millis();
+
 
   for (;;) {
-    for (uint8_t i = 0; i < 10; i++) {
-      counter.currentValue = i * 1111;
-      
-      for(uint32_t start = millis(); millis() - start < 1000; ) {
-        counter.draw();
-      }
+    uint32_t currentTime = millis();
+
+    if(currentTime - lastUpdateTime >= 1) {
+      lastUpdateTime = currentTime;
+      counter.increment();
+      counter.draw(counter.currentValue);
     }
+
+    counter.draw();
   }
 }
 
@@ -27,18 +31,18 @@ void setup() {
     pinMode(segmentPins[seg], OUTPUT);
   }
   
-  // Digit pinek beállítása
+
   for (uint8_t dig = 0; dig < 4; dig++) {
     pinMode(digitPins[dig], OUTPUT);
   }
 
   xTaskCreate(
       vCounterTask,
-      "CounterTask",                // Task name
-      1000,                     // Stack size
-      NULL,                     // Parameters
-      1,                        // Priority
-      &xCounterHandle           // Task handle
+      "CounterTask",                
+      1000,                     
+      NULL,                     
+      1,                        
+      &xCounterHandle           
   );
 }
 

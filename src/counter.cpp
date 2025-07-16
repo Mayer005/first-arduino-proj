@@ -21,6 +21,7 @@ void Counter::decrement() {
 
 void Counter::draw(uint16_t currentValue) {
     uint16_t temp = currentValue;
+
     
     for (int i = 3; i >= 0; i--) {
         uint8_t digit = temp % 10;
@@ -35,9 +36,7 @@ void Counter::draw() {
 
 void Counter::drawDigit(int position, uint8_t digit) {
     uint8_t segments = digitSegments[digit];
-    for(const auto& pin : digitPins) {
-        digitalWrite(pin, HIGH);
-    }
+    clear();
 
     for (uint8_t seg = 0; seg < 7; seg++) {
         digitalWrite(segmentPins[seg], segments & (1 << seg));
@@ -45,5 +44,14 @@ void Counter::drawDigit(int position, uint8_t digit) {
 
     digitalWrite(digitPins[position], LOW);
 
+}
 
+void Counter::clear() {
+    for (const auto& pin : digitPins) {
+        digitalWrite(pin, HIGH);
+    }
+
+    for (const auto& pin : segmentPins) {
+        digitalWrite(pin, LOW);
+    }
 }
