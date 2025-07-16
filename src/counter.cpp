@@ -7,7 +7,7 @@
 void Counter::increment() {
     currentValue++;
     if (currentValue > 9999) {
-        currentValue = 0; // Reset to 0 if it exceeds 9999
+        currentValue = 0; 
     }
 }
 
@@ -15,7 +15,7 @@ void Counter::decrement() {
     if (currentValue > 0) {
         currentValue--;
     } else {
-        currentValue = 9999; // Wrap around to 9999 if it goes below 0
+        currentValue = 9999; 
     }
 }
 

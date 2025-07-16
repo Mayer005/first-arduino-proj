@@ -34,6 +34,9 @@ struct Counter {
     void draw();
     void drawDigit(int position, uint8_t digit);
     void clear();
+    inline void reset() {
+        currentValue = 0;
+    }
 };
 
 #endif // COUNTER_H
