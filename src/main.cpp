@@ -1,41 +1,44 @@
-#include <Arduino.h>
+
 #include <Arduino_FreeRTOS.h>
 
+#include "counter.h"
 
-TaskHandle_t xLedTaskHandle = NULL;
 
-void vLedTask(void *pvParameters) {
-    const TickType_t xDelay5000ms = pdMS_TO_TICKS(5000);
-    
-    for(;;) {
-        digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN)); // Toggle LED
-        vTaskDelay(xDelay5000ms); // Várakozás 5000ms
+void __attribute__((weak)) loop() {}
+
+TaskHandle_t xCounterHandle = NULL;
+
+void vCounterTask(void *pvParameters) {
+  Counter counter;
+
+  for (;;) {
+    for (uint8_t i = 0; i < 10; i++) {
+      counter.currentValue = i * 1111;
+      
+      for(uint32_t start = millis(); millis() - start < 1000; ) {
+        counter.draw();
+      }
     }
+  }
 }
 
 void setup() {
-    // Serial inicializálása (opcionális)
-    Serial.begin(115200);
-    
-    // LED pin kimenetre állítása
-    pinMode(LED_BUILTIN, OUTPUT);
-    digitalWrite(LED_BUILTIN, LOW);
-    
-    // LED task létrehozása
-    xTaskCreate(
-        vLedTask,               // Task függvény
-        "LED Blink",            // Task név
-        configMINIMAL_STACK_SIZE + 50, // Stack méret
-        NULL,                   // Paraméterek
-        1,                      // Prioritás
-        &xLedTaskHandle         // Task handle
-    );
-    
-    // A scheduler automatikusan indul a setup() lefutása után.
-    // A vTaskStartScheduler() hívása itt szükségtelen.
+   for (uint8_t seg = 0; seg < 8; seg++) {
+    pinMode(segmentPins[seg], OUTPUT);
+  }
+  
+  // Digit pinek beállítása
+  for (uint8_t dig = 0; dig < 4; dig++) {
+    pinMode(digitPins[dig], OUTPUT);
+  }
+
+  xTaskCreate(
+      vCounterTask,
+      "CounterTask",                // Task name
+      1000,                     // Stack size
+      NULL,                     // Parameters
+      1,                        // Priority
+      &xCounterHandle           // Task handle
+  );
 }
 
-void loop() {
-  // Ez a függvény üresen marad, mivel az ütemező futtatja a taszkokat.
-  // Alacsony prioritású idle task-ként funkcionálhat.
-}
