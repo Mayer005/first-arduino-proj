@@ -90,6 +90,8 @@ void vLedTask(void* pvParameters) {
 
     attachInterrupt(digitalPinToInterrupt(button.pin), buttonISR, FALLING);
 
+    xSemaphoreTake(xButtonSemaphore, 0);
+
     xSemaphoreTake(xButtonSemaphore, portMAX_DELAY);
 
     detachInterrupt(digitalPinToInterrupt(button.pin));
