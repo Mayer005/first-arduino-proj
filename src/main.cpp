@@ -16,7 +16,7 @@ long stopTime;
 LED greenLed(26);
 LED redLed(40);
 
-volatile bool isGreen = false;
+volatile bool isGreen = true;
 
 void vCounterTask(void *pvParameters) {
   Counter counter;
@@ -34,7 +34,7 @@ void vCounterTask(void *pvParameters) {
       lastGreenState = currentGreenState;
     }
 
-    if(isGreen) {
+    if(!isGreen) {
       counter.draw();
       continue;
     }
@@ -88,8 +88,8 @@ void setup() {
   pinMode(greenLed.getPin(), OUTPUT);
   pinMode(redLed.getPin(), OUTPUT);
 
-  greenLed.off();
-  redLed.on();
+  greenLed.on();
+  redLed.off();
 
   xTaskCreate(
       vCounterTask,
